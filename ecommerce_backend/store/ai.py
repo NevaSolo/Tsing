@@ -59,8 +59,9 @@ def generate_brief(prompt, text=""):
     user = f"{prompt}\n{s['text_label']}{text}" if text else prompt
     messages = [
         {"role": "system", "content": s["system"]},
-        # « /no_think » : Qwen3 répond directement, sans phase de réflexion (bien plus rapide sur processeur).
-        {"role": "user", "content": f"{user} /no_think"},
+        # Pas de « /no_think » dans le texte : le modèle le recopiait dans les slogans (mesuré sur le serveur).
+        # La réflexion est coupée par l'option « think: false » ci-dessous (Ollama ≥ 0.9).
+        {"role": "user", "content": user},
     ]
     last_error = None
     for model in models():

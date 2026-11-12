@@ -1,0 +1,6 @@
+# Scripts et fichiers lus par Linux (Docker, serveur) : toujours en fins de ligne LF
+*.sh text eol=lf
+Dockerfile text eol=lf
+*.Dockerfile text eol=lf
+Caddyfile text eol=lf
+*.yml text eol=lf

@@ -214,7 +214,8 @@ PAYMENT_TIMEOUT_MINUTES = int(os.environ.get('PAYMENT_TIMEOUT_MINUTES', '30'))
 OLLAMA_URL = os.environ.get('OLLAMA_URL', '')
 OLLAMA_MODEL = os.environ.get('OLLAMA_MODEL', 'qwen3:4b')
 OLLAMA_FALLBACK_MODELS = env_list('OLLAMA_FALLBACK_MODELS', 'llama3.2:3b')
-OLLAMA_TIMEOUT = int(os.environ.get('OLLAMA_TIMEOUT', '120'))
+# Mesuré sur le serveur (processeur, qwen3:4b) : ≈ 60 s par demande, ≈ 100 s si le modèle doit être rechargé.
+OLLAMA_TIMEOUT = int(os.environ.get('OLLAMA_TIMEOUT', '170'))
 # Modèle gardé en mémoire entre deux demandes (évite un rechargement de plusieurs secondes).
 OLLAMA_KEEP_ALIVE = os.environ.get('OLLAMA_KEEP_ALIVE', '30m')
 AI_MAX_PROMPT = 600

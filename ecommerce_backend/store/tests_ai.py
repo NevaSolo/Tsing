@@ -83,6 +83,7 @@ class ServerAITests(APITestCase):
         self.assertEqual(call["messages"][0]["content"], spec["system"], "même consigne que le site")
         self.assertEqual(call["format"], spec["schema"], "sortie contrainte au schéma du site")
         self.assertIn("Texte imposé : Meute", call["messages"][1]["content"])
+        self.assertNotIn("no_think", call["messages"][1]["content"], "recopié dans les slogans sinon")
         self.assertFalse(call["think"])
         self.assertFalse(call["stream"])
 

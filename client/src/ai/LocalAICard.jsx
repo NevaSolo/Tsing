@@ -94,7 +94,7 @@ const LocalAICard = ({ enabled, onEnabledChange }) => {
           </div>
           <p className="mt-0.5 text-xs text-muted-foreground">
             {server
-              ? `L'IA de Tsing (${ai.serverModel}) imagine vos designs sur nos serveurs : rien à télécharger, aucun coût. Comptez 20 à 40 secondes par demande.`
+              ? `L'IA de Tsing (${ai.serverModel}) imagine vos designs sur nos serveurs : rien à télécharger, aucun coût. Comptez environ une minute par demande (un peu plus pour la première).`
               : `${MODEL_LABEL} s'exécute dans votre navigateur : aucun compte, aucun coût, vos idées ne quittent pas votre appareil. Comptez environ une minute par demande sur une carte graphique intégrée (plus rapide sur une carte dédiée).`}
           </p>
         </div>

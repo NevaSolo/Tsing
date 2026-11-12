@@ -18,8 +18,8 @@ export const MODEL_VRAM_MB = 2245;
  * compilation de la grammaire du schéma JSON) : mesuré > 120 s sur carte intégrée, puis ≈ 80 s.
  */
 const GENERATION_TIMEOUT_MS = 150_000;
-/** IA du serveur : le modèle tourne sur processeur (≈ 20 à 40 s), file d'attente comprise. */
-const SERVER_TIMEOUT_MS = 180_000;
+/** IA du serveur : processeur, ≈ 60 s (≈ 100 s modèle à recharger) ; le serveur abandonne à 170 s. */
+const SERVER_TIMEOUT_MS = 185_000;
 const FIRST_GENERATION_TIMEOUT_MS = 300_000;
 let warmedUp = false;
 /**

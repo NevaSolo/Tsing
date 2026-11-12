@@ -1,5 +1,12 @@
-# SITE_ADDRESS : nom de domaine (ex. tsing.75.119.136.160.sslip.io) → certificat HTTPS automatique.
-{$SITE_ADDRESS} {
+# CADDY_SITE : nom de domaine (HTTPS automatique) ou « :80 » derrière le Caddy principal du serveur.
+{
+	servers {
+		# Derrière un autre proxy : on garde ses en-têtes X-Forwarded-* (https), utiles à Django.
+		trusted_proxies static private_ranges
+	}
+}
+
+{$CADDY_SITE} {
 	encode zstd gzip
 
 	# API et administration Django

@@ -8,6 +8,9 @@ ecommerce_backend/staticfiles/
 # Dépendances et compilations
 node_modules/
 client/dist/
+# Cache de Vite (régénéré automatiquement)
+client/.vite/
+node_modules/.vite/
 client/public/models/
 ecommerce_backend/env/
 __pycache__/

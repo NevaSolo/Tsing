@@ -84,10 +84,13 @@ const normalizeWords = (s) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
 const ENGLISH = /\b(the|to|of|and|with|your|you|my|is|are|for|from|be|free|stress|get|let|it|its|our|this|that|just)\b/;
 
 const COPIED_EXAMPLES = new Set(["esprit vague", "cap sur la mer"]);
+// Instructions techniques recopiées par le modèle (mesuré : « no_think » parmi les slogans).
+const ARTIFACT = /think|_/i;
 
 export const isAcceptableSlogan = (s) =>
   Array.from(s).length <= SLOGAN_MAX &&
   !COPIED_EXAMPLES.has(normalizeWords(s).trim()) &&
+  !ARTIFACT.test(s) &&
   !ENGLISH.test(normalizeWords(s)) &&
   (s.match(/\p{L}/gu) ?? []).length >= 2 &&
   !FOREIGN_SCRIPT.test(s) &&

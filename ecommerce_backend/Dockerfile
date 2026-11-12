@@ -9,7 +9,9 @@ COPY requirements.txt .
 RUN pip install -r requirements.txt
 
 COPY . .
-RUN chmod +x docker-entrypoint.sh && useradd --create-home tsing && mkdir -p /data/media /data/static && chown -R tsing /app /data
+# Fins de ligne Linux : le script a pu être enregistré sous Windows (CRLF), ce qui empêche son lancement.
+RUN sed -i 's/\r$//' docker-entrypoint.sh && chmod +x docker-entrypoint.sh \
+    && useradd --create-home tsing && mkdir -p /data/media /data/static && chown -R tsing /app /data
 USER tsing
 
 ENV DJANGO_DEBUG=false DB_ENGINE=postgres DJANGO_STATIC_ROOT=/data/static DJANGO_MEDIA_ROOT=/data/media

@@ -149,6 +149,7 @@ test("slogans : doublons insensibles à la casse, sans lettres, typographie, ré
   const b = normalizeBrief({ ...VALID, slogans: ["Belle vague", "BELLE VAGUE", "belle-vague !"], summary: "一个 t-shirt de mort" });
   assert.deepEqual(b.slogans, ["Belle vague"]);
   assert.equal(isAcceptableSlogan("Esprit vague"), false, "exemple recopié de l'ancienne consigne");
+  assert.equal(isAcceptableSlogan("no_think"), false, "instruction technique recopiée par le modèle");
   assert.equal(b.summary, "");
   assert.deepEqual(normalizeBrief({ ...VALID, slogans: ["!!", "--", "..."] }).slogans, []);
   for (const ok of ["Café…", "Rock / Roll", "Surf + soleil", "Été – 2026"]) assert.equal(isAcceptableSlogan(ok), true, ok);
