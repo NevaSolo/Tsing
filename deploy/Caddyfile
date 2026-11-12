@@ -1,0 +1,36 @@
+# SITE_ADDRESS : nom de domaine (ex. tsing.75.119.136.160.sslip.io) → certificat HTTPS automatique.
+{$SITE_ADDRESS} {
+	encode zstd gzip
+
+	# API et administration Django
+	handle /api/* {
+		reverse_proxy backend:8000
+	}
+	handle /admin/* {
+		reverse_proxy backend:8000
+	}
+	# Images envoyées par les designers, fichiers de l'admin
+	handle_path /media/* {
+		root * /data/media
+		file_server
+	}
+	handle_path /static/* {
+		root * /data/static
+		file_server
+	}
+	# Site React (application à page unique : toutes les routes renvoient index.html)
+	handle {
+		root * /srv/www
+		try_files {path} /index.html
+		file_server
+		@assets path /assets/*
+		header @assets Cache-Control "public, max-age=31536000, immutable"
+	}
+
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+		-Server
+	}
+}

@@ -1,0 +1,49 @@
+const handleExportGLTF = () => {
+    setExporting(true);
+    try {
+      const scene = new THREE.Scene();
+      const { nodes, materials } = useGLTF("/scene.gltf");
+
+      const shirtMesh = new THREE.Mesh(
+        nodes.Object_4.geometry,
+        materials.lambert1
+      );
+      scene.add(shirtMesh);
+
+      // Exporter en GLTF
+      const exporter = new GLTFExporter();
+      exporter.parse(
+        scene,
+        (gltf) => {
+          const blob = new Blob([JSON.stringify(gltf)], { type: 'model/gltf+json' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `custom-shirt_${Date.now()}.gltf`;
+          a.click();
+          setExporting(false);
+        },
+        { binary: false }
+      );
+    } catch (error) {
+      console.error("Erreur lors de l'export GLTF:", error);
+      setExporting(false);
+    }
+  };
+
+  const handleSaveProject = () => {
+    const projectName = window.prompt("Nom du projet :", "Mon T-shirt personnalisé");
+    if (!projectName) return;
+
+    const projects = JSON.parse(localStorage.getItem("tshirt_projects") || "[]");
+    const projectData = {
+      id: id ? Number(id) : Date.now(),
+      name: projectName,
+      text,
+      image,
+      imageScale,
+      imagePosition,
+      imageRotation,
+      createdAt: new Date().toISOString()
+    };
+1234Fafa@008

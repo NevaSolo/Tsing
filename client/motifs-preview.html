@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="fr">
+<head><meta charset="utf-8"><title>Motifs (dev)</title>
+<style>body{margin:0;font:12px sans-serif;background:#ddd}main{display:grid;grid-template-columns:repeat(6,200px);gap:6px;padding:6px}figure{margin:0;background:var(--bg);color:#888;text-align:center}canvas{display:block}</style></head>
+<body><main id="grid"></main>
+<script type="module">
+import { MOTIFS, drawMotifLayer } from "/src/studio/motifs.js";
+const q = new URLSearchParams(location.search);
+const bg = "#" + (q.get("bg") ?? "111111");
+const effects = (q.get("fx") ?? "").split(",").filter(Boolean);
+const colors = (q.get("colors") ?? "f28c28,f5e6c8,dff3ff").split(",").map((c) => "#" + c);
+for (const m of MOTIFS) {
+  const fig = document.createElement("figure");
+  fig.style.setProperty("--bg", bg);
+  const cv = document.createElement("canvas");
+  cv.width = cv.height = 200;
+  const ctx = cv.getContext("2d");
+  drawMotifLayer(ctx, { motif: m.id, x: 0.5, y: 0.5, size: 120, rotation: 0, color: colors[0], color2: colors[1], accent: colors[2], effects, seed: Number(q.get("seed") ?? 1) }, 200, 200);
+  fig.append(cv, Object.assign(document.createElement("figcaption"), { textContent: m.id }));
+  document.getElementById("grid").append(fig);
+}
+window.__done = true;
+</script></body></html>

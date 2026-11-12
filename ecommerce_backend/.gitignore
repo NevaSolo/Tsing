@@ -1,0 +1,8 @@
+env
+__pycache__/
+*.pyc
+.env
+media/
+
+# Base SQLite de développement
+db.sqlite3

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Banc de mesure — IA locale</title>
+  </head>
+  <body style="font-family: system-ui; padding: 24px">
+    <!--
+      Outil de développement : mesure le chargement et la vitesse d'un modèle WebLLM sur CETTE machine.
+      Usage : http://localhost:5173/ai-bench.html?model=Qwen3.5-2B-q4f16_1-MLC
+      Résultats dans la page et dans window.__bench (lu par les scripts de test).
+    -->
+    <h1>Banc de mesure — IA locale</h1>
+    <pre id="out">Démarrage…</pre>
+    <script type="module">
+      import { CreateMLCEngine } from "@mlc-ai/web-llm";
+      import { BRIEF_SCHEMA, buildBriefMessages, normalizeBrief } from "/src/ai/brief.js";
+
+      const out = document.getElementById("out");
+      const params = new URLSearchParams(location.search);
+      const model = params.get("model") ?? "Qwen3.5-2B-q4f16_1-MLC";
+      const PROMPTS = [
+        "Logo rétro pour un club de surf, tons orangés",
+        "Un cadeau pour mon oncle qui adore la pêche et la pétanque",
+        "T-shirt noir pour une soirée gaming entre amis, ambiance néon",
+        "Quelque chose de doux pour la fête des mères, couleurs pastel",
+        "Streetwear minimaliste pour Paris, dans le dos",
+        "Mon chat s'appelle Biscotte, je veux un t-shirt rigolo",
+      ];
+      const log = (msg) => (out.textContent = msg);
+      window.__bench = { status: "loading", model };
+      try {
+        const t0 = performance.now();
+        const engine = await CreateMLCEngine(model, {
+          initProgressCallback: (r) => {
+            window.__bench.progress = r.progress;
+            window.__bench.progressText = r.text;
+            log(`Chargement ${Math.round(r.progress * 100)} % — ${r.text}`);
+          },
+        });
+        const loadMs = performance.now() - t0;
+        const results = [];
+        for (const prompt of PROMPTS) {
+          log(`Génération : ${prompt}`);
+          const t = performance.now();
+          const reply = await engine.chat.completions.create({
+            messages: buildBriefMessages(prompt),
+            response_format: { type: "json_object", schema: JSON.stringify(BRIEF_SCHEMA) },
+            max_tokens: 350,
+            temperature: 0.7,
+          });
+          const choice = reply.choices[0];
+          results.push({
+            prompt,
+            ms: Math.round(performance.now() - t),
+            finish: choice.finish_reason,
+            usage: reply.usage,
+            content: choice.message.content,
+            brief: normalizeBrief(choice.message.content),
+          });
+        }
+        window.__bench = { status: "done", model, loadMs: Math.round(loadMs), results };
+        log(JSON.stringify(window.__bench, null, 2));
+      } catch (err) {
+        window.__bench = { status: "error", model, error: String(err?.stack ?? err) };
+        log(window.__bench.error);
+      }
+    </script>
+  </body>
+</html>

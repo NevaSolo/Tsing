@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><title>Bordures (dev)</title>
+<style>body{margin:0;background:#888}canvas{display:block;width:1024px;height:1024px}</style></head>
+<body><canvas id="c" width="1024" height="1024"></canvas>
+<script type="module">
+import GEO from "/src/canvas/utils/trimGeometry.js";
+import { drawTrim } from "/src/canvas/utils/trims.js";
+const q = new URLSearchParams(location.search);
+const ctx = document.getElementById("c").getContext("2d");
+ctx.fillStyle = "#222"; ctx.fillRect(0, 0, 1024, 1024);
+// Contours des pièces (repères)
+ctx.strokeStyle = "#5af"; ctx.lineWidth = 1;
+for (const part of ["sleeves", "hem", "collar"]) for (const [a, b, c, d, e, f] of GEO[part].tris) { ctx.beginPath(); ctx.moveTo(a * 1024, b * 1024); ctx.lineTo(c * 1024, d * 1024); ctx.lineTo(e * 1024, f * 1024); ctx.closePath(); ctx.stroke(); }
+drawTrim(ctx, { parts: ["collar", "sleeves", "hem"], color: "#e63946", color2: "#ffffff", style: q.get("style") ?? "solid", width: 26 }, 1024, 1024);
+window.__done = true;
+</script></body></html>

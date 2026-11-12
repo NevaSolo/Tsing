@@ -1,0 +1,21 @@
+# Secrets et données locales (jamais dans Git)
+.env
+deploy/.env
+*.sqlite3
+ecommerce_backend/media/
+ecommerce_backend/staticfiles/
+
+# Dépendances et compilations
+node_modules/
+client/dist/
+client/public/models/
+ecommerce_backend/env/
+__pycache__/
+*.pyc
+
+# Éditeurs / système
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db

@@ -1,0 +1,163 @@
+@import "tailwindcss";
+
+/* Thème sombre piloté par la classe .dark sur <html> (voir ThemeContext et le script anti-flash d'index.html). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * Design system Tsing : une seule source de vérité pour les couleurs, la typographie,
+ * les rayons et les ombres. Chaque token génère ses utilitaires Tailwind
+ * (ex. --color-brand → bg-brand / text-brand / border-brand / ring-brand).
+ */
+@theme {
+  /* Typographie */
+  --font-display: "Jaro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  /* Couleur de marque (unique) */
+  --color-brand: #a40000;
+  --color-brand-hover: #8a0000;
+  --color-brand-soft: #fdf1f1;
+  --color-brand-foreground: #ffffff;
+  /* Rouge de marque pour le TEXTE et les icônes (sur fond sombre, le rouge de surface serait illisible). */
+  --color-brand-ink: #a40000;
+
+  /* Couleurs sémantiques (utilisées par components/ui) */
+  --color-background: #ffffff;
+  --color-foreground: #171717;
+  /* Surface des cartes / panneaux / fenêtres (légèrement plus claire que la page en sombre = relief). */
+  --color-card: #ffffff;
+  --color-muted: #f5f5f5;
+  --color-muted-foreground: #5c5c5c;
+  --color-border: #e5e5e5;
+  --color-input: #d4d4d4;
+  --color-ring: #a40000;
+  --color-primary: #a40000;
+  --color-primary-foreground: #ffffff;
+  --color-secondary: #f5f5f5;
+  --color-secondary-foreground: #171717;
+  --color-accent: #fdf1f1;
+  --color-accent-foreground: #8a0000;
+  --color-destructive: #b91c1c;
+  --color-destructive-foreground: #ffffff;
+  --color-success: #15803d;
+  --color-success-soft: #ecfdf3;
+  --color-warning: #a16207;
+  --color-warning-soft: #fefce8;
+  --color-info: #1d4ed8;
+  --color-info-soft: #eff6ff;
+
+  /* Rayons et ombres */
+  --radius-card: 0.875rem;
+  --radius-control: 0.5rem;
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.04), 0 4px 16px rgb(0 0 0 / 0.06);
+  --shadow-card-hover: 0 2px 4px rgb(0 0 0 / 0.06), 0 12px 32px rgb(0 0 0 / 0.1);
+
+  /* Animations */
+  --animate-fade-in-up: fade-in-up 0.6s cubic-bezier(0.4, 0, 0.2, 1) both;
+  --animate-toast-in: toast-in 0.2s ease-out both;
+
+  @keyframes fade-in-up {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes toast-in {
+    from { opacity: 0; transform: translateY(8px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+}
+
+/*
+ * Thème sombre : mêmes noms de tokens, autres valeurs (contrastes WCAG vérifiés) :
+ * texte #ededed / fond 16:1 · texte secondaire 7,5:1 · brand-ink 6,9:1 · blanc sur brand 5,4:1.
+ */
+@layer base {
+  :root.dark {
+    color-scheme: dark;
+    --color-brand: #d02020;
+    --color-brand-hover: #e03131;
+    --color-brand-soft: #2a1414;
+    --color-brand-ink: #f87171;
+    --color-background: #121214;
+    --color-foreground: #ededed;
+    --color-card: #1a1a1e;
+    --color-muted: #1e1e22;
+    --color-muted-foreground: #a1a1aa;
+    --color-border: #2e2e33;
+    --color-input: #46464d;
+    --color-ring: #f87171;
+    --color-primary: #d02020;
+    --color-primary-foreground: #ffffff;
+    --color-secondary: #1e1e22;
+    --color-secondary-foreground: #ededed;
+    --color-accent: #2a1414;
+    --color-accent-foreground: #fca5a5;
+    /* Bouton « danger » : fond clair + texte foncé (un rouge foncé serait illisible sur le fond sombre). */
+    --color-destructive: #f87171;
+    --color-destructive-foreground: #1c0606;
+    --color-success: #4ade80;
+    --color-success-soft: #0f2a1a;
+    --color-warning: #facc15;
+    --color-warning-soft: #2a2405;
+    --color-info: #60a5fa;
+    --color-info-soft: #0f1e36;
+    --shadow-card: 0 1px 2px rgb(0 0 0 / 0.5), 0 4px 16px rgb(0 0 0 / 0.35);
+    --shadow-card-hover: 0 2px 4px rgb(0 0 0 / 0.6), 0 12px 32px rgb(0 0 0 / 0.5);
+  }
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+  }
+  html.dark {
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Focus clavier toujours visible, à la couleur de la marque */
+  :focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+  }
+
+  input[type="range"] {
+    accent-color: var(--color-brand);
+  }
+  /* Accent clair en sombre : Chromium dessine alors une piste sombre (au lieu d'une piste blanche éclatante). */
+  html.dark input[type="range"] {
+    accent-color: var(--color-brand-ink);
+  }
+
+  /*
+   * Espace entre un élément et son anneau de focus/sélection : couleur du fond, pas le blanc par défaut
+   * de Tailwind (halo blanc en mode sombre). `*` car la variable n'est pas héritée.
+   */
+  *,
+  ::before,
+  ::after {
+    --tw-ring-offset-color: var(--color-background);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@utility no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

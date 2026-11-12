@@ -1,0 +1,177 @@
+import { useState, useEffect} from "react";
+import font from "./utils/font";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import ShirtCanvas from "./objects/ShirtCanvas";
+
+const ShirtCustomizer = ({ activeTab, isSave, Shirt }) => {
+  // États pour la personnalisation du texte
+  const [textColor, setTextColor] = useState("#000000");
+  const [textSize, setTextSize] = useState(48);
+  const [position, setPosition] = useState({ x: 0.5, y: 0.4 });
+  const [rotation, setRotation] = useState(0);
+  const [customText, setCustomText] = useState("");
+  const [fontFamily, setFontFamily] = useState("Arial");
+  const [tshirtColor, setTshirtColor] = useState("#ffffff");
+
+  // États pour l'image
+  const [image, setImage] = useState(null);
+  const [currentImage, setCurrentImage] = useState(image);
+  const [imageScale, setImageScale] = useState(1);
+  const [imagePosition, setImagePosition] = useState({ x: 0.5, y: 0.5 });
+  const [imageRotation, setImageRotation] = useState(0);
+
+  // État pour les détails du t-shirt
+  const [shirtDetails, setShirtDetails] = useState({
+    name: "",
+    description: "",
+    price: 0,
+    stock: 0,
+  });
+
+  const [formData, setFormData] = useState([]);
+
+  const [saving, setSaving] = useState(false);
+  const [showSaveModal, setShowSaveModal] = useState(isSave);
+  const navigate = useNavigate();
+
+
+  useEffect(() => {
+    setCurrentImage(image);
+  }, [image]);
+
+  useEffect(() => {
+    setShowSaveModal(isSave);
+  }, [isSave]);
+
+  useEffect(() => {
+  if (saving) {
+    // Validation avant envoi
+    if (!shirtDetails.name.trim()) {
+      alert("Le nom du projet est requis.");
+      setSaving(false);
+      return;
+    }
+    if (!shirtDetails.price || shirtDetails.price < 0) {
+      alert("Le prix doit être positif.");
+      setSaving(false);
+      return;
+    }
+    if (!shirtDetails.stock || shirtDetails.stock < 0) {
+      alert("Le stock doit être positif.");
+      setSaving(false);
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("name", shirtDetails.name);
+    formData.append("description", shirtDetails.description);
+    formData.append("price", shirtDetails.price);
+    formData.append("stock", shirtDetails.stock);
+    formData.append("text_color", textColor);
+    formData.append("text_size", textSize);
+    formData.append("position", JSON.stringify(position));
+    formData.append("rotation", rotation);
+    formData.append("custom_text", customText);
+    formData.append("font_family", fontFamily);
+    formData.append("shirt_color", tshirtColor);
+    formData.append("image_scale", imageScale);
+    formData.append("image_position", JSON.stringify(imagePosition));
+    formData.append("image_rotation", imageRotation);
+
+    // Important : ajouter le fichier (pas base64)
+    if (image instanceof File) {
+      formData.append("image", image);
+    }
+    setFormData(formData);
+
+    axios
+      .post("http://localhost:8000/api/Shirts/", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      })
+      .then((response) => {
+        alert("Votre projet a été enregistré avec succès !");
+        console.log("Données enregistrées :", response.data);
+        setShirtDetails({ name: "", description: "", price: 0, stock: 0 });
+        setShowSaveModal(false);
+      })
+      .catch((error) => {
+        console.error("Erreur lors de l'enregistrement :", error);
+        alert("Une erreur est survenue lors de l'enregistrement.");
+      })
+      .finally(() => {
+        setSaving(false);
+      });
+       navigate("/archive")
+  }
+}, [saving]);
+
+
+
+
+  return (
+    <div className="w-full h-full flex">
+      {/* Zone 3D */}
+      <div className="w-2/3 h-full bg-gray-100">
+        <ShirtCanvas data={formData}/>
+      </div>
+
+      {/* Panneau de contrôle */}
+    ...
+    </div>
+  );
+};
+
+export default ShirtCustomizer;
+
+
+//ShirtCanvas
+import { Suspense } from "react";
+import { Canvas } from "@react-three/fiber";
+import { OrbitControls, Stage } from "@react-three/drei";
+import Shirt from "./Shirt";
+
+const ShirtCanvas = ({data}) => {
+  return (
+    <>
+        <Canvas shadows camera={{ position: [0, 0, 1], fov: 45 }}>
+            <ambientLight intensity={0.5} />
+            <Stage environment="city" intensity={0.5}>
+            <Suspense fallback={null}>
+                <Shirt
+                text={data.customText}
+                textColor={data.textColor}
+                textSize={data.textSize}
+                textPosition={data.position}
+                textRotation={data.rotation}
+                image={data.currentImage}
+                activeTab={data.activeTab}
+                fontFamily={datafontFamily}
+                imageScale={data.imageScale}
+                imagePosition={data.imagePosition}
+                imageRotation={data.imageRotation}
+                tshirtColor={data.tshirtColor}
+                />
+            </Suspense>
+            </Stage>
+            <directionalLight
+            position={[10, 10, 5]}
+            intensity={1}
+            castShadow
+            shadow-mapSize-width={1024}
+            shadow-mapSize-height={1024}
+            />
+            <OrbitControls
+            minPolarAngle={Math.PI / 4}
+            maxPolarAngle={Math.PI / 2}
+            minDistance={0.5}
+            maxDistance={5}
+            enableZoom={true}
+            enablePan={true}
+            />
+        </Canvas>
+    </>
+  )
+}
+
+export default ShirtCanvas

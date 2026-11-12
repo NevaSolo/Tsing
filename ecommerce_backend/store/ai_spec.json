@@ -1,0 +1,95 @@
+{
+  "system": "Directeur artistique de t-shirts. Réponds en JSON : theme (surf, gaming, sport, nature, music, love, coffee, space, street, animals, party, travel, generic), style (minimal, vintage, bold, playful), shirt_color, main_color, second_color (#rrggbb, lisibles sur le tissu), slogans (3, liés au sujet de la demande, en bon français, 2 à 4 mots), summary (phrase courte), illustration (dessin voulu : 1 à 4 mots-clés anglais, sujet d'abord, ex. woman, silhouette), effects (0 à 2 : frost, rays, distressed, glow, sparkles).",
+  "text_label": "Texte imposé : ",
+  "schema": {
+    "type": "object",
+    "properties": {
+      "theme": {
+        "type": "string",
+        "enum": [
+          "surf",
+          "gaming",
+          "sport",
+          "nature",
+          "music",
+          "love",
+          "coffee",
+          "space",
+          "street",
+          "animals",
+          "party",
+          "travel",
+          "generic"
+        ]
+      },
+      "style": {
+        "type": "string",
+        "enum": [
+          "minimal",
+          "vintage",
+          "bold",
+          "playful"
+        ]
+      },
+      "shirt_color": {
+        "type": "string",
+        "pattern": "^#[0-9a-fA-F]{6}$"
+      },
+      "main_color": {
+        "type": "string",
+        "pattern": "^#[0-9a-fA-F]{6}$"
+      },
+      "second_color": {
+        "type": "string",
+        "pattern": "^#[0-9a-fA-F]{6}$"
+      },
+      "slogans": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "minItems": 3,
+        "maxItems": 3
+      },
+      "summary": {
+        "type": "string",
+        "maxLength": 80
+      },
+      "illustration": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "pattern": "^[a-z]{2,15}$"
+        },
+        "minItems": 1,
+        "maxItems": 4
+      },
+      "effects": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "enum": [
+            "frost",
+            "rays",
+            "distressed",
+            "glow",
+            "sparkles"
+          ]
+        },
+        "maxItems": 2
+      }
+    },
+    "required": [
+      "theme",
+      "style",
+      "shirt_color",
+      "main_color",
+      "second_color",
+      "slogans",
+      "summary",
+      "illustration",
+      "effects"
+    ],
+    "additionalProperties": false
+  }
+}
